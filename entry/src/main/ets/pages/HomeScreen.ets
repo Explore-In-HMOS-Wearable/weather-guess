@@ -1,4 +1,4 @@
-import { Animation, Scene, Camera, EnvironmentBackgroundType, SceneResourceFactory, Color} from '@kit.ArkGraphics3D';
+import { Animation, Scene, Camera, EnvironmentBackgroundType, SceneResourceFactory, Color } from '@kit.ArkGraphics3D';
 import { router, AnimatorResult } from '@kit.ArkUI';
 import Logger from '../utils/Logger';
 import { Constants } from '../constants/Constants';
@@ -106,7 +106,12 @@ export struct HomeScreen {
 
           this.cam = await rf.createCamera({ 'name': 'Camera' });
           this.cam.enabled = true;
-          this.cam.clearColor  = {r: 1, g: 1, b: 1, a: 1} as Color;
+          this.cam.clearColor = {
+            r: 1,
+            g: 1,
+            b: 1,
+            a: 1
+          } as Color;
 
           this.sceneOpt = { scene: this.scene, modelType: ModelType.SURFACE } as SceneOptions;
         })
@@ -118,67 +123,69 @@ export struct HomeScreen {
 
   build() {
     Stack() {
-        Column() {
-          if (this.sceneOpt) {
-            Component3D(this.sceneOpt)
-              .renderWidth($r('app.string.sixty_percent'))
-              .renderHeight($r('app.string.sixty_percent'))
-              .backgroundColor(Color.Transparent)
-              .onAppear(() => {
-                if (!this.scene || !this.scene.animations[0]) {
-                  return;
-                }
-                let anim: Animation = this.scene.animations[0];
-                anim.onStarted(() => {
-                  this.animationCallbackInvoked = Constants.STRING_START;
-                });
-                anim.onFinished(() => {
-                  this.animationCallbackInvoked = Constants.STRING_FINISH;
-                });
-                this.backAnimator?.play();
-              })
-          } else {
-            Text($r('app.string.loading')).fontColor(Color.Black)
-          }
+      Column() {
+        if (this.sceneOpt) {
+          Component3D(this.sceneOpt)
+            .renderWidth($r('app.string.sixty_percent'))
+            .renderHeight($r('app.string.sixty_percent'))
+            .backgroundColor(Color.Transparent)
+            .onAppear(() => {
+              if (!this.scene || !this.scene.animations[0]) {
+                return;
+              }
+              let anim: Animation = this.scene.animations[0];
+              anim.onStarted(() => {
+                this.animationCallbackInvoked = Constants.STRING_START;
+              });
+              anim.onFinished(() => {
+                this.animationCallbackInvoked = Constants.STRING_FINISH;
+              });
+              this.backAnimator?.play();
+            })
+        } else {
+          Text($r('app.string.loading')).fontColor(Color.Black)
         }
-        .width(Constants.FULL_PERCENT)
-        .height(Constants.FULL_PERCENT)
-        .borderRadius($r('app.float.board_radius_normal'))
-        .justifyContent(FlexAlign.Center)
+      }
+      .width(Constants.FULL_PERCENT)
+      .height(Constants.FULL_PERCENT)
+      .borderRadius($r('app.float.board_radius_normal'))
+      .justifyContent(FlexAlign.Center)
 
       Text('WEATHER GUESS')
         .fontWeight(FontWeight.Bolder)
         .fontSize(20)
 
-        if (this.isNewGame === true) {
-          Column() {
-            Image($r('app.media.watch'))
-              .width(20)
-              .height(20)
-            Text('Wave your hand to start game!')
-              .fontSize(15)
-              .fontWeight(FontWeight.Bold)
-              .fontColor(Color.Black)
-              .textAlign(TextAlign.Center)
-              .width('100%')
+      if (this.isNewGame === true) {
+        Column() {
+          Image($r('app.media.watch'))
+            .width(20)
+            .height(20)
+          Text('Wave your hand to start game!')
+            .fontSize(15)
+            .fontWeight(FontWeight.Bold)
+            .fontColor(Color.Black)
+            .textAlign(TextAlign.Center)
+            .width('100%')
 
-            Button('OK')
-              .onClick(() => { this.isNewGame = false })
-              .fontSize(10)
-              .width(85)
-              .height(22)
-              .borderRadius(14)
-              .margin({ top: 8 })
-              .backgroundColor(0x007AFF)
-              .fontColor(Color.White)
-          }
-          .width(150)
-          .height(120)
-          .padding(16)
-          .backgroundColor(Color.White)
-          .borderRadius(10)
-          .alignSelf(ItemAlign.Center)
+          Button('OK')
+            .onClick(() => {
+              this.isNewGame = false
+            })
+            .fontSize(10)
+            .width(85)
+            .height(22)
+            .borderRadius(14)
+            .margin({ top: 8 })
+            .backgroundColor(0x007AFF)
+            .fontColor(Color.White)
         }
+        .width(150)
+        .height(120)
+        .padding(16)
+        .backgroundColor(Color.White)
+        .borderRadius(10)
+        .alignSelf(ItemAlign.Center)
+      }
     }
     .width(Constants.FULL_PERCENT)
     .height(Constants.FULL_PERCENT)

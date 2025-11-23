@@ -198,7 +198,7 @@ export class Constants {
   /**
    * Environment factor.
    */
-  static readonly  ENVIRONMENT_FACTOR: Vec4[] = [
+  static readonly ENVIRONMENT_FACTOR: Vec4[] = [
     {
       x: 1,
       y: 1,

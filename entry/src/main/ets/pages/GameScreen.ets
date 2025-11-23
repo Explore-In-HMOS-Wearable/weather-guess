@@ -2,7 +2,15 @@ import { CityModel } from '../model/CityModel'
 import Logger from '../utils/Logger'
 import { AnimatorResult, router } from '@kit.ArkUI'
 import { Constants } from '../constants/Constants';
-import { Animation, Camera, EnvironmentBackgroundType, Node, Scene, SceneResourceFactory, Color } from '@kit.ArkGraphics3D';
+import {
+  Animation,
+  Camera,
+  EnvironmentBackgroundType,
+  Node,
+  Scene,
+  SceneResourceFactory,
+  Color
+} from '@kit.ArkGraphics3D';
 
 @Entry
 @Component
@@ -20,7 +28,6 @@ struct WeatherGuessGame {
   anim: Animation | null = null;
   private readonly SHAKE_THRESHOLD: number = 12;
   @State isNewGame: boolean = false;
-
   @State currentIndex: number = 0
   @State guessTemp: number = 20
   @State score: number = 0
@@ -115,6 +122,7 @@ struct WeatherGuessGame {
   }
 
   node: Node | null | undefined = null;
+
   init(): void {
     this.backAnimator = this.getUIContext().createAnimator(Constants.ANIMATION_OPTION);
     this.backAnimator.onFrame = () => {
@@ -136,7 +144,12 @@ struct WeatherGuessGame {
             const node = this.scene.root.getNodeByPath('Sketchfab_Scene/Sketchfab_model/root/GLTF_SceneRootNode');
             if (node) {
               const angle = Math.PI / 6;
-              node.rotation = { x: Math.sin(angle / 2), y: 0, z: 0, w: Math.cos(angle / 2) };
+              node.rotation = {
+                x: Math.sin(angle / 2),
+                y: 0,
+                z: 0,
+                w: Math.cos(angle / 2)
+              };
             } else {
               console.error('Node cannot find!');
             }
@@ -168,7 +181,12 @@ struct WeatherGuessGame {
           // set the camera.
           this.cam.enabled = true;
           //this.cam.position.z = 5;
-          this.cam.clearColor  = {r: 1, g: 1, b: 1, a: 1} as Color;
+          this.cam.clearColor = {
+            r: 1,
+            g: 1,
+            b: 1,
+            a: 1
+          } as Color;
 
           this.sceneOpt = { scene: this.scene, modelType: ModelType.SURFACE } as SceneOptions;
         })
