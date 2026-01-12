@@ -1,20 +1,20 @@
 import { Animation, Scene, Camera, EnvironmentBackgroundType, SceneResourceFactory, Color } from '@kit.ArkGraphics3D';
-import { router, AnimatorResult } from '@kit.ArkUI';
+import { AnimatorResult } from '@kit.ArkUI';
 import Logger from '../utils/Logger';
 import { Constants } from '../constants/Constants';
 import { sensor } from '@kit.SensorServiceKit';
 import { BusinessError } from '@kit.BasicServicesKit';
+import { NavigationService } from '../services/NavigationService';
 
-@Entry
 @Component
 export struct HomeScreen {
   @State sceneOpt: SceneOptions | null = null;
-  @State progressValue: number = 0;
-  @State animationEnabled: Boolean = false;
-  @State animationDuration: number = 0;
-  @State animationIsRunning: Boolean = false;
+  progressValue: number = 0;
+  animationEnabled: Boolean = false;
+  animationDuration: number = 0;
+  animationIsRunning: Boolean = false;
   @State animationCallbackInvoked: string = Constants.STRING_NO;
-  @State enable: boolean = true;
+  enable: boolean = true;
   scene: Scene | null = null;
   cam: Camera | null = null;
   backAnimator: AnimatorResult | undefined = undefined;
@@ -22,14 +22,7 @@ export struct HomeScreen {
   private readonly SHAKE_THRESHOLD: number = 12;
   @State isNewGame: boolean = false;
 
-  onJumpClick(target_url: string): void {
-    this.getUIContext().getRouter().pushUrl({ url: target_url }, router.RouterMode.Single, (err) => {
-      if (err) {
-        Logger.error('TAG', `Invoke pushUrl failed, code is ${err.code}, message is ${err.message}`);
-        return;
-      }
-    });
-  }
+  navigationService: NavigationService = NavigationService.getInstance();
 
   onShake() {
     console.info('Watch shook!');
@@ -49,7 +42,7 @@ export struct HomeScreen {
 
         if (delta > this.SHAKE_THRESHOLD) {
           this.onShake()
-          this.onJumpClick('pages/GameScreen');
+          this.navigationService.pageInfos.pushPath({ name: 'Game' })
         }
       }, { interval: 100000000 }); // 100 ms
 

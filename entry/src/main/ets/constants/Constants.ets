@@ -222,7 +222,7 @@ export class Constants {
       y: 1,
       z: 40,
       w: 1
-    },
+    }
   ];
 
   /**

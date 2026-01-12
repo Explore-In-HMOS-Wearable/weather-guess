@@ -1,6 +1,6 @@
 import { CityModel } from '../model/CityModel'
 import Logger from '../utils/Logger'
-import { AnimatorResult, router } from '@kit.ArkUI'
+import { AnimatorResult } from '@kit.ArkUI'
 import { Constants } from '../constants/Constants';
 import {
   Animation,
@@ -11,23 +11,22 @@ import {
   SceneResourceFactory,
   Color
 } from '@kit.ArkGraphics3D';
+import { NavigationService } from '../services/NavigationService';
 
-@Entry
 @Component
-struct WeatherGuessGame {
+export struct WeatherGuessGame {
   @State sceneOpt: SceneOptions | null = null;
-  @State progressValue: number = 0;
-  @State animationEnabled: Boolean = false;
-  @State animationDuration: number = 0;
-  @State animationIsRunning: Boolean = false;
+  progressValue: number = 0;
+  animationEnabled: Boolean = false;
+  animationDuration: number = 0;
+  animationIsRunning: Boolean = false;
   @State animationCallbackInvoked: string = Constants.STRING_NO;
-  @State enable: boolean = true;
+  enable: boolean = true;
   scene: Scene | null = null;
   cam: Camera | null = null;
   backAnimator: AnimatorResult | undefined = undefined;
   anim: Animation | null = null;
-  private readonly SHAKE_THRESHOLD: number = 12;
-  @State isNewGame: boolean = false;
+  isNewGame: boolean = false;
   @State currentIndex: number = 0
   @State guessTemp: number = 20
   @State score: number = 0
@@ -49,17 +48,9 @@ struct WeatherGuessGame {
     new CityModel(7, 'Moscow', [10]),
     new CityModel(8, 'Dubai', [34]),
     new CityModel(9, 'Sydney', [26]),
-    new CityModel(10, 'Cairo', [31]),
+    new CityModel(10, 'Cairo', [31])
   ];
-
-  onJumpClick(target_url: string): void {
-    this.getUIContext().getRouter().pushUrl({ url: target_url }, router.RouterMode.Single, (err) => {
-      if (err) {
-        Logger.error('TAG', `Invoke pushUrl failed, code is ${err.code}, message is ${err.message}`);
-        return;
-      }
-    });
-  }
+  navigationService: NavigationService = NavigationService.getInstance();
 
   aboutToAppear() {
     this.startTimer()
@@ -180,7 +171,6 @@ struct WeatherGuessGame {
           this.cam = await rf.createCamera({ 'name': 'Camera' });
           // set the camera.
           this.cam.enabled = true;
-          //this.cam.position.z = 5;
           this.cam.clearColor = {
             r: 1,
             g: 1,
@@ -249,7 +239,7 @@ struct WeatherGuessGame {
             .fontColor(Color.Gray)
           Button('Return Home')
             .onClick(() => {
-              this.onJumpClick('pages/HomeScreen');
+              this.navigationService.pageInfos.pushPath({ name: 'Home' })
               this.currentIndex = 0
               this.guessTemp = 20
               this.score = 0

@@ -7,10 +7,10 @@ WeatherGuess is a fun temperature prediction game for HarmonyOS devices. Powered
 # Preview
 
 <div>
-	<img src="./screenshots/output1.png" width="24%" />
-	<img src="./screenshots/output2.png" width="24%" />
-	<img src="./screenshots/output3.png" width="24%" />
-	<img src="./screenshots/output4.png" width="24%" />
+<img src="./screenshots/output1.png" width="24%" />
+<img src="./screenshots/output2.png" width="24%" />
+<img src="./screenshots/output3.png" width="24%" />
+<img src="./screenshots/output4.png" width="24%" />
 </div>
 
 # Use Cases
@@ -63,10 +63,9 @@ WeatherGuess is a fun temperature prediction game for HarmonyOS devices. Powered
 - Huawei Watch 5
 - Devices running HarmonyOS 5.1.0 (API 18) and above
 
+# License
 
-# Licence
-
-WeatherGuess is distributed under the terms of the MIT License
+WeatherGuess is distributed under the terms of the **MIT License**
 See the [LICENSE](./LICENSE) for more information.
 
 
