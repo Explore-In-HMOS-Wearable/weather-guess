@@ -1,5 +1,3 @@
-> **Note:** To access all shared projects, get information about environment setup, and view other guides, please visit [Explore-In-HMOS-Wearable Index](https://github.com/Explore-In-HMOS-Wearable/hmos-index).
-
 # Weather Guess
 
 WeatherGuess is a fun temperature prediction game for HarmonyOS devices. Powered by ArkGraphics 3D and Sensor Kit, it starts with a simple wrist shake and challenges you with random city temperatures. Your final score appears on a clean results page, making weather guessing playful and engaging.
@@ -67,5 +65,3 @@ WeatherGuess is a fun temperature prediction game for HarmonyOS devices. Powered
 
 WeatherGuess is distributed under the terms of the **MIT License**
 See the [LICENSE](./LICENSE) for more information.
-
-

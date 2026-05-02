@@ -1,6 +1,7 @@
 import { NavigationService } from '../services/NavigationService';
 import { WeatherGuessGame } from './GameScreen';
 import { HomeScreen } from './HomeScreen';
+import { StatsScreen } from './StatsScreen';
 
 @Entry
 @Component
@@ -14,10 +15,13 @@ struct Index {
         HomeScreen()
       } else if (name === 'Game') {
         WeatherGuessGame()
+      } else if (name === 'Stats') {
+        StatsScreen()
       }
     }
-    .onBackPressed(() => true)
+    .onBackPressed(() => false)
     .hideTitleBar(true)
+    .backgroundColor(Color.White)
   }
 
   build() {

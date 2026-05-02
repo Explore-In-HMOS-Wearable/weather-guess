@@ -3,6 +3,8 @@ export class NavigationService {
   static _instance: NavigationService;
   @Trace pageInfos: NavPathStack = new NavPathStack()
   @Trace pageList: PageModel[] = [];
+  @Trace difficulty: number = 1;
+  @Trace isDailyMode: boolean = false;
 
   static getInstance() {
     if (!NavigationService._instance) {

@@ -28,7 +28,7 @@ export class Constants {
   static readonly TWENTY_PERCENT: string = '20%';
 
   /**
-   * Percent 13.
+   * Thirteen percent.
    */
   static readonly THIRTEEN_PERCENT: string = '13%';
 
@@ -36,31 +36,6 @@ export class Constants {
    * List space.
    */
   static readonly LIST_SPACE: number = 12;
-
-  /**
-   * Helmet node path.
-   */
-  static readonly HELMET_NODE_PATH: string = 'rootNode_/Scene/node_damagedHelmet_-6514';
-
-  /**
-   * Helmet path.
-   */
-  static readonly HELMET_PATH: string = 'node_damagedHelmet_-6514';
-
-  /**
-   * Helmet parent path.
-   */
-  static readonly HELMET_PARENT_PATH: string = 'Scene/node_damagedHelmet_-6514';
-
-  /**
-   * Scene node path.
-   */
-  static readonly SCENE_NODE_PATH: string = 'rootNode_/Scene';
-
-  /**
-   * Cube path.
-   */
-  static readonly CUBE_PATH: string = 'rootNode_/Unnamed Node 1/Cube';
 
   /**
    * Camera position z index.
@@ -73,7 +48,7 @@ export class Constants {
   static readonly FONT_WEIGHT_FIVE_HUNDRED: number = 500;
 
   /**
-   * Clear color.
+   * Clear color (transparent).
    */
   static readonly CLEAR_COLOR: Color = {
     r: 0,
@@ -81,36 +56,6 @@ export class Constants {
     b: 0,
     a: 0.0
   };
-
-  /**
-   * Clear color blue.
-   */
-  static readonly CLEAR_COLOR_BLUE: Color = {
-    r: 0,
-    g: 0,
-    b: 1,
-    a: 1
-  };
-
-  /**
-   * Clear color red.
-   */
-  static readonly CLEAR_COLOR_RED: Color = {
-    r: 1,
-    g: 0,
-    b: 0,
-    a: 1
-  };
-
-  /**
-   * XAxis value.
-   */
-  static readonly XAXIS_VALUE: number = 10;
-
-  /**
-   * XAxis step.
-   */
-  static readonly XAXIS_STEP: number = 0.1;
 
   /**
    * PI RADIAN.
@@ -133,41 +78,12 @@ export class Constants {
   static readonly DEGREE_NINETY: number = 90;
 
   /**
-   * Colors
-   */
-  static readonly COLORS: Color[] = [
-    {
-      r: 0.8,
-      g: 0.1,
-      b: 0.2,
-      a: 1.0
-    },
-    {
-      r: 0.1,
-      g: 0.8,
-      b: 0.2,
-      a: 1.0
-    },
-    {
-      r: 0.2,
-      g: 0.1,
-      b: 0.8,
-      a: 1.0
-    }
-  ];
-
-  /**
-   * Intensities.
-   */
-  static readonly INTENSITIES: number[] = [100.0, 500.0, 1000.0, 1500.0, 2000.0];
-
-  /**
    * Half hundred.
    */
   static readonly HALF_HUNDRED: number = 50.0;
 
   /**
-   * Animation option.
+   * Animation option for the backAnimator driving 3D scene frame progress.
    */
   static readonly ANIMATION_OPTION: AnimatorOptions = {
     duration: 2000,
@@ -196,7 +112,7 @@ export class Constants {
   static readonly STRING_FINISH: string = 'finish';
 
   /**
-   * Environment factor.
+   * Environment factor presets for ArkGraphics3D scene environment.
    */
   static readonly ENVIRONMENT_FACTOR: Vec4[] = [
     {

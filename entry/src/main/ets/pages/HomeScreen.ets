@@ -1,26 +1,21 @@
-import { Animation, Scene, Camera, EnvironmentBackgroundType, SceneResourceFactory, Color } from '@kit.ArkGraphics3D';
-import { AnimatorResult } from '@kit.ArkUI';
-import Logger from '../utils/Logger';
-import { Constants } from '../constants/Constants';
+import { Animation } from '@kit.ArkGraphics3D';
 import { sensor } from '@kit.SensorServiceKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { NavigationService } from '../services/NavigationService';
+import { Constants } from '../constants/Constants';
+import { SceneController } from '../utils/SceneController';
 
 @Component
 export struct HomeScreen {
   @State sceneOpt: SceneOptions | null = null;
-  progressValue: number = 0;
-  animationEnabled: Boolean = false;
-  animationDuration: number = 0;
-  animationIsRunning: Boolean = false;
-  @State animationCallbackInvoked: string = Constants.STRING_NO;
-  enable: boolean = true;
-  scene: Scene | null = null;
-  cam: Camera | null = null;
-  backAnimator: AnimatorResult | undefined = undefined;
-  anim: Animation | null = null;
+  @State difficulty: number = 1;
+  @State isDailyMode: boolean = false;
   private readonly SHAKE_THRESHOLD: number = 12;
-  @State isNewGame: boolean = false;
+  private sensorCallback: ((data: sensor.AccelerometerResponse) => void) | null = null;
+  private sceneCtrl: SceneController = new SceneController(
+    $rawfile('gltf/earth/scene.gltf'),
+    Constants.ANIMATION_OPTION
+  );
 
   navigationService: NavigationService = NavigationService.getInstance();
 
@@ -29,10 +24,9 @@ export struct HomeScreen {
   }
 
   aboutToAppear(): void {
-    this.isNewGame = true
     this.init()
     try {
-      sensor.on(sensor.SensorId.ACCELEROMETER, (data: sensor.AccelerometerResponse) => {
+      this.sensorCallback = (data: sensor.AccelerometerResponse) => {
         const x = data.x;
         const y = data.y;
         const z = data.z;
@@ -42,9 +36,12 @@ export struct HomeScreen {
 
         if (delta > this.SHAKE_THRESHOLD) {
           this.onShake()
+          this.navigationService.difficulty = this.difficulty
+          this.navigationService.isDailyMode = this.isDailyMode
           this.navigationService.pageInfos.pushPath({ name: 'Game' })
         }
-      }, { interval: 100000000 }); // 100 ms
+      };
+      sensor.on(sensor.SensorId.ACCELEROMETER, this.sensorCallback, { interval: 100000000 }); // 100 ms
 
     } catch (error) {
       let e: BusinessError = error as BusinessError;
@@ -53,65 +50,23 @@ export struct HomeScreen {
   }
 
   onPageHide(): void {
-    if (this.scene) {
-      this.scene.destroy();
+    if (this.sensorCallback) {
+      try {
+        sensor.off(sensor.SensorId.ACCELEROMETER, this.sensorCallback);
+      } catch (e) {
+        // ignore if callback was not registered
+      }
+      this.sensorCallback = null;
     }
-
-    this.cam = null;
-    this.scene = null;
+    this.sceneCtrl.destroy();
+    this.sceneOpt = null;
   }
 
   init(): void {
-    this.backAnimator = this.getUIContext().createAnimator(Constants.ANIMATION_OPTION);
-    this.backAnimator.onFrame = () => {
-      if (this.scene?.animations[0]) {
-        this.animationEnabled = this.scene.animations[0].enabled;
-        this.animationDuration = this.scene.animations[0].duration;
-        this.animationIsRunning = this.scene.animations[0].running;
-        this.progressValue = this.scene.animations[0].progress;
-      }
-    }
-    if (this.scene === null) {
-      Scene.load($rawfile('gltf/earth/scene.gltf'))
-        .then(async (result: Scene) => {
-          this.scene = result;
-          let rf: SceneResourceFactory = this.scene.getResourceFactory();
-          this.scene.environment.backgroundType = EnvironmentBackgroundType.BACKGROUND_NONE;
-
-          this.anim = this.scene.animations[0];
-          this.anim.start()
-          if (this.anim) {
-            this.anim.enabled = true;
-            this.anim.onStarted(() => {
-              Logger.info('onStarted');
-              this.animationCallbackInvoked = 'animation on start';
-            });
-
-            this.anim.onFinished(() => {
-              Logger.info('onFinished');
-              this.animationCallbackInvoked = 'animation on finish';
-            });
-
-            Logger.info('ready to create a new animation.');
-          } else {
-            Logger.error('No animation found in scene.');
-          }
-
-          this.cam = await rf.createCamera({ 'name': 'Camera' });
-          this.cam.enabled = true;
-          this.cam.clearColor = {
-            r: 1,
-            g: 1,
-            b: 1,
-            a: 1
-          } as Color;
-
-          this.sceneOpt = { scene: this.scene, modelType: ModelType.SURFACE } as SceneOptions;
-        })
-        .catch((error: string) => {
-          Logger.error(`init error: ${error}`);
-        });
-    }
+    this.sceneCtrl.onReady((opt: SceneOptions) => {
+      this.sceneOpt = opt;
+    });
+    this.sceneCtrl.init(this.getUIContext());
   }
 
   build() {
@@ -119,24 +74,28 @@ export struct HomeScreen {
       Column() {
         if (this.sceneOpt) {
           Component3D(this.sceneOpt)
-            .renderWidth($r('app.string.sixty_percent'))
-            .renderHeight($r('app.string.sixty_percent'))
+            .renderWidth($r('app.string.full_percent_str'))
+            .renderHeight($r('app.string.full_percent_str'))
             .backgroundColor(Color.Transparent)
             .onAppear(() => {
-              if (!this.scene || !this.scene.animations[0]) {
+              if (!this.sceneCtrl.scene || !this.sceneCtrl.scene.animations[0]) {
                 return;
               }
-              let anim: Animation = this.scene.animations[0];
+              let anim: Animation = this.sceneCtrl.scene.animations[0];
               anim.onStarted(() => {
-                this.animationCallbackInvoked = Constants.STRING_START;
+                console.info('HomeScreen: animation started');
               });
               anim.onFinished(() => {
-                this.animationCallbackInvoked = Constants.STRING_FINISH;
+                console.info('HomeScreen: animation finished');
               });
-              this.backAnimator?.play();
+              this.sceneCtrl.backAnimator?.play();
             })
         } else {
-          Text($r('app.string.loading')).fontColor(Color.Black)
+          // Emulator / no-GPU fallback: static globe placeholder.
+          // ArkGraphics3D is absent on the wearable emulator (no libscene.z.so).
+          Text('🌍')
+            .fontSize(90)
+            .opacity(0.18)
         }
       }
       .width(Constants.FULL_PERCENT)
@@ -144,45 +103,75 @@ export struct HomeScreen {
       .borderRadius($r('app.float.board_radius_normal'))
       .justifyContent(FlexAlign.Center)
 
-      Text('WEATHER GUESS')
-        .fontWeight(FontWeight.Bolder)
-        .fontSize(20)
+      Column({ space: 6 }) {
+        Text($r('app.string.app_title'))
+          .fontWeight(FontWeight.Bolder)
+          .fontSize(18)
+          .fontColor(Color.Black)
 
-      if (this.isNewGame === true) {
-        Column() {
-          Image($r('app.media.watch'))
-            .width(20)
-            .height(20)
-          Text('Wave your hand to start game!')
-            .fontSize(15)
-            .fontWeight(FontWeight.Bold)
-            .fontColor(Color.Black)
-            .textAlign(TextAlign.Center)
-            .width('100%')
+        Button($r('app.string.btn_start'))
+          .onClick(() => {
+            this.navigationService.difficulty = this.difficulty
+            this.navigationService.isDailyMode = this.isDailyMode
+            this.navigationService.pageInfos.pushPath({ name: 'Game' })
+          })
+          .fontSize(14)
+          .width('46%')
+          .height(32)
+          .borderRadius(16)
+          .backgroundColor(0x007AFF)
+          .fontColor(Color.White)
 
-          Button('OK')
-            .onClick(() => {
-              this.isNewGame = false
-            })
-            .fontSize(10)
-            .width(85)
-            .height(22)
+        // Difficulty selector (P2-T3)
+        Row({ space: 6 }) {
+          Button($r('app.string.difficulty_easy'))
+            .onClick(() => { this.difficulty = 0 })
+            .fontSize(11)
+            .layoutWeight(1)
+            .height(28)
             .borderRadius(14)
-            .margin({ top: 8 })
-            .backgroundColor(0x007AFF)
+            .padding({ top: 0, bottom: 0, left: 4, right: 4 })
+            .backgroundColor(this.difficulty === 0 ? 0x22AA44 : 0xCCCCCC)
+            .fontColor(Color.White)
+          Button($r('app.string.difficulty_normal'))
+            .onClick(() => { this.difficulty = 1 })
+            .fontSize(11)
+            .layoutWeight(1)
+            .height(28)
+            .borderRadius(14)
+            .padding({ top: 0, bottom: 0, left: 4, right: 4 })
+            .backgroundColor(this.difficulty === 1 ? 0x007AFF : 0xCCCCCC)
+            .fontColor(Color.White)
+          Button($r('app.string.difficulty_hard'))
+            .onClick(() => { this.difficulty = 2 })
+            .fontSize(11)
+            .layoutWeight(1)
+            .height(28)
+            .borderRadius(14)
+            .padding({ top: 0, bottom: 0, left: 4, right: 4 })
+            .backgroundColor(this.difficulty === 2 ? 0xCC3333 : 0xCCCCCC)
             .fontColor(Color.White)
         }
-        .width(150)
-        .height(120)
-        .padding(16)
-        .backgroundColor(Color.White)
-        .borderRadius(10)
-        .alignSelf(ItemAlign.Center)
+        .width('80%')
+
+        // Daily Challenge toggle (P4-T4)
+        Button(this.isDailyMode ? $r('app.string.daily_mode_on') : $r('app.string.daily_mode_off'))
+          .onClick(() => { this.isDailyMode = !this.isDailyMode })
+          .fontSize(10)
+          .width(110)
+          .height(20)
+          .borderRadius(10)
+          .backgroundColor(this.isDailyMode ? 0xAA7700 : 0xCCCCCC)
+          .fontColor(Color.White)
       }
+      .alignItems(HorizontalAlign.Center)
+      .padding({ bottom: 12 })
+      .position({ x: '50%', y: '72%' })
+      .translate({ x: '-50%', y: '-50%' })
     }
     .width(Constants.FULL_PERCENT)
     .height(Constants.FULL_PERCENT)
     .alignContent(Alignment.Center)
-
+    .backgroundColor(Color.White)
   }
 }

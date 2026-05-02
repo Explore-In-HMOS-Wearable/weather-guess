@@ -21,6 +21,10 @@
       "value": "To read data from gyroscope sensors"
     },
     {
+      "name": "reason_vibrate",
+      "value": "To provide haptic feedback on guess results"
+    },
+    {
       "name": "loading",
       "value": "Loading..."
     },
@@ -109,8 +113,100 @@
       "value": "Progress: %s%"
     },
     {
-      "name": "sixty_percent",
+      "name": "full_percent_str",
       "value": "100%"
+    },
+    {
+      "name": "app_title",
+      "value": "WEATHER GUESS"
+    },
+    {
+      "name": "shake_to_start",
+      "value": "Shake wrist to start!"
+    },
+    {
+      "name": "btn_start",
+      "value": "Start"
+    },
+    {
+      "name": "difficulty_easy",
+      "value": "Easy"
+    },
+    {
+      "name": "difficulty_normal",
+      "value": "Normal"
+    },
+    {
+      "name": "difficulty_hard",
+      "value": "Hard"
+    },
+    {
+      "name": "btn_guess",
+      "value": "Guess"
+    },
+    {
+      "name": "btn_return_home",
+      "value": "Return Home"
+    },
+    {
+      "name": "result_congratulations",
+      "value": "Congratulations!"
+    },
+    {
+      "name": "result_game_over",
+      "value": "Game Over!"
+    },
+    {
+      "name": "label_correct",
+      "value": "Correct: %s/%s"
+    },
+    {
+      "name": "label_score",
+      "value": "Score: %s"
+    },
+    {
+      "name": "label_best",
+      "value": "Best: %s"
+    },
+    {
+      "name": "daily_mode_on",
+      "value": "Daily: ON"
+    },
+    {
+      "name": "daily_mode_off",
+      "value": "Daily: OFF"
+    },
+    {
+      "name": "daily_badge",
+      "value": "Daily Challenge"
+    },
+    {
+      "name": "btn_stats",
+      "value": "Stats"
+    },
+    {
+      "name": "stats_title",
+      "value": "Statistics"
+    },
+    {
+      "name": "stats_games_played",
+      "value": "Games Played"
+    },
+    {
+      "name": "stats_best_score",
+      "value": "Best Score"
+    },
+    {
+      "name": "stats_avg_score",
+      "value": "Avg Score"
+    },
+    {
+      "name": "stats_accuracy",
+      "value": "Accuracy"
+    },
+    {
+      "name": "btn_hint",
+      "value": "Hint (-1pt)"
     },
     {
       "name": "duration",
